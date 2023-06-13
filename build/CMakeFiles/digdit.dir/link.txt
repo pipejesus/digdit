@@ -1,0 +1,1 @@
+/usr/bin/g++-10 -g CMakeFiles/digdit.dir/main.cpp.o CMakeFiles/digdit.dir/src/StarBackground.cpp.o -o digdit  vendor/raylib/raylib/libraylib.a -lm -latomic -lpthread /usr/lib/x86_64-linux-gnu/libOpenGL.so /usr/lib/x86_64-linux-gnu/libGLX.so vendor/raylib/raylib/external/glfw/src/libglfw3.a /usr/lib/x86_64-linux-gnu/librt.a -lm -ldl 
