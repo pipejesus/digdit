@@ -9,7 +9,7 @@ set(RAYLIB_STATIC ON)
 set(BUILD_EXAMPLES OFF)
 set(BUILD_GAMES OFF)
 
-add_executable(digdit main.cpp src/StarBackground.cpp src/StarBackground.h)
+add_executable(digdit main.cpp src/StarBackground.cpp src/StarBackground.h src/Hero.h src/Hero.cpp src/Physical.cpp src/Physical.h)
 
 target_link_libraries(digdit raylib)
 

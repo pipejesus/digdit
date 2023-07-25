@@ -16,8 +16,9 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "shaders/rlights.h"
+#include "rcamera.h"
+#include "src/Hero.h"
 
-Model model;
 int screenWidth = 1024;
 int screenHeight = 512;
 
@@ -27,11 +28,11 @@ Shader sceneShader;
 float ambientLight[4]{0.10f, 0.10f, 0.10f, 1.0f};
 int ambientLightLoc;
 float lightAngle = 0.0f;
+Hero *hero = nullptr;
 
 std::vector<Light> sceneLights{};
 
 auto pos = Vector3{0.0, 0.0f, 0.0f};
-auto rotAxis = Vector3{0.0f, 1.0f, 0.0f};
 auto scale = Vector3{1.0f, 1.0f, 1.0f};
 
 void setupSceneShader() {
@@ -45,20 +46,20 @@ void setupSceneShader() {
 void createLights() {
     sceneLights.push_back(
             CreateLight(
-                    LIGHT_POINT,
-                    Vector3{0.0f, 2.0f, 0.0f},
+                    LIGHT_DIRECTIONAL,
+                    Vector3{0.0f, 2.0f, 5.0f},
                     Vector3Zero(),
-                    Color{100, 100, 100, 255},
+                    Color{0, 20, 100, 2},
                     sceneShader
             )
     );
 }
 
 void setupCamera() {
-    camera.position = (Vector3) {0.0f, .5f, 1.8f};    // Camera position
+    camera.position = (Vector3) {0.0f, 6.0f, 0.01f};    // Camera position
     camera.target = (Vector3) {0.0f, 0.0f, 0.0f};      // Camera looking at point
     camera.up = (Vector3) {0.0f, 1.0f, 0.0f};          // Camera up vector (rotation towards target)
-    camera.fovy = 45.0f;                                // Camera field-of-view Y
+    camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 }
 
@@ -71,22 +72,29 @@ void onResize(int w, int h) {
 }
 
 void animateLights(float dt) {
-    lightAngle += 1.4f * dt;
+    lightAngle += 0.4f * dt;
     sceneLights[0].position.z = sin(lightAngle);
     sceneLights[0].position.x = cos(lightAngle);
 }
 
+void loadModels() {
+    hero = new Hero(Vector2{0.0f, -1.0f}, 1.0f, false);
+//    hero->ApplyGravity(9.81f);
+    hero->ApplyForce(Vector2{0.0f, 1/9.81});
+}
 
 void init() {
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Digdit");
+    loadModels();
     setupSceneShader();
     setupCamera();    
-    createLights();    
+    createLights();
     SetTargetFPS(60);
 }
 
-void deInit() {    
+void deInit() {
+    delete hero;
     UnloadShader(sceneShader);    
     CloseWindow();
 }
@@ -100,11 +108,15 @@ void loop() {
     float dt = GetFrameTime();
     float cameraPos[3] = {camera.position.x, camera.position.y, camera.position.z};
     SetShaderValue(sceneShader, sceneShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
-    UpdateLightValues(sceneShader, sceneLights[0]);
+//    UpdateLightValues(sceneShader, sceneLights[0]);
 
-    UpdateCamera(&camera, CAMERA_ORBITAL);
+//    UpdateCamera(&camera, CAMERA_ORBITAL);
+//    UpdateCameraPro(&camera, Vector3{0.0f ,0.002f, 0.0f},Vector3{0.0f ,0.0f, 0.0f}, 0.0f);
+//    CameraMoveToTarget(&camera, -0.1f);
+    camera.position = Vector3Add(camera.target, Vector3Scale(GetCameraForward(&camera), -2.0f));
+    animateLights(dt);
 
-    animateLights(dt);    
+    hero->Update(dt, GetTime());
 
     BeginDrawing();
     {
@@ -112,7 +124,8 @@ void loop() {
 
         BeginMode3D(camera);
         {
-            DrawCube(pos, 1.0f, 1.0f, 1.0f, WHITE);
+            hero->Draw();
+//            DrawGrid(200, 0.25f);
         }
         EndMode3D();
     }

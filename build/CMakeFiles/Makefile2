@@ -143,8 +143,8 @@ vendor/raylib/raylib/external/glfw/src/clean: vendor/raylib/raylib/external/glfw
 # Target rules for target CMakeFiles/digdit.dir
 
 # All Build rule for target.
-CMakeFiles/digdit.dir/all: vendor/raylib/raylib/external/glfw/src/CMakeFiles/glfw.dir/all
 CMakeFiles/digdit.dir/all: vendor/raylib/raylib/CMakeFiles/raylib.dir/all
+CMakeFiles/digdit.dir/all: vendor/raylib/raylib/external/glfw/src/CMakeFiles/glfw.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/digdit.dir/build.make CMakeFiles/digdit.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/digdit.dir/build.make CMakeFiles/digdit.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/pimu/CLionProjects/digdit/build/CMakeFiles --progress-num=1,2,3 "Built target digdit"
